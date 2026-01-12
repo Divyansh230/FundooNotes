@@ -39,7 +39,7 @@ export default function KeepHeader() {
               height="40"
             />
             <Typography sx={{ ml: 1, fontSize: 22 }}>
-              Keep
+              FundooNotes
             </Typography>
           </Box>
         </Box>
