@@ -1,16 +1,54 @@
-import React from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-  Button,
-  Link,
-} from "@mui/material";
+import React, { useRef,useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import {Box, Card,CardContent,TextField,Typography,Button,Link,} from "@mui/material";
 import shield from "../assets/shield.jpeg";
 
 const Signup = () => {
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const confirmPasswordRef = useRef();
+
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = () => {
+    const firstName = firstNameRef.current.value;
+    const lastName = lastNameRef.current.value;
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+    const confirmPassword = confirmPasswordRef.current.value;
+
+    let newErrors = {};
+
+    if (!firstName.match(/^[A-Za-z]{2,}$/)) {
+      newErrors.firstName = "Enter a valid first name";
+    }
+
+    if (!lastName.match(/^[A-Za-z]{2,}$/)) {
+      newErrors.lastName = "Enter a valid last name";
+    }
+
+    if (!email.endsWith("@gmail.com")) {
+      newErrors.email = "Email must end with @gmail.com";
+    }
+
+    if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      setErrors({});
+      alert("Form submitted successfully");
+    }
+  };
+
   return (
     <>
       <Box
@@ -43,8 +81,20 @@ const Signup = () => {
 
                 {/* Name */}
                 <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                  <TextField label="First name" fullWidth />
-                  <TextField label="Last name" fullWidth />
+                  <TextField
+                    label="First name"
+                    fullWidth
+                    inputRef={firstNameRef}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
+                  />
+                  <TextField
+                    label="Last name"
+                    fullWidth
+                    inputRef={lastNameRef}
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                  />
                 </Box>
 
                 {/* Email */}
@@ -52,6 +102,9 @@ const Signup = () => {
                   label="Your email address"
                   fullWidth
                   sx={{ mb: 1 }}
+                  inputRef={emailRef}
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
 
                 <Typography variant="body2" color="text.secondary" mb={1}>
@@ -64,8 +117,22 @@ const Signup = () => {
 
                 {/* Password */}
                 <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
-                  <TextField label="Password" type="password" fullWidth />
-                  <TextField label="Confirm" type="password" fullWidth />
+                  <TextField
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    inputRef={passwordRef}
+                    error={!!errors.password}
+                    helperText={errors.password}
+                  />
+                  <TextField
+                    label="Confirm"
+                    type="password"
+                    fullWidth
+                    inputRef={confirmPasswordRef}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
+                  />
                 </Box>
 
                 <Typography variant="body2" color="text.secondary" mt={1}>
@@ -81,7 +148,7 @@ const Signup = () => {
                     mt: 4,
                   }}
                 >
-                  <Link underline="none" fontWeight={500}>
+                  <Link component={RouterLink} to="/login" underline="none" fontWeight={500}>
                     Sign in instead
                   </Link>
 
@@ -92,6 +159,7 @@ const Signup = () => {
                       textTransform: "none",
                       px: 4,
                     }}
+                    onClick={handleSubmit}
                   >
                     Next
                   </Button>

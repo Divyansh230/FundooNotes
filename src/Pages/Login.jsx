@@ -1,20 +1,36 @@
-import { useState } from "react";
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-  Button,
-  Link,
-  IconButton,
-  InputAdornment,
-} from "@mui/material";
+import { useState, useRef } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import {Box,Card,CardContent,TextField, Typography, Button, Link, IconButton, InputAdornment,} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-export default function GoogleLoginUI() {
+export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = () => {
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+    let newErrors = {};
+
+    if (!email.endsWith("@gmail.com")) {
+      newErrors.email = "Email must end with @gmail.com";
+    }
+
+    if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      setErrors({});
+      alert("Login successful");
+    }
+  };
 
   return (
     <Box
@@ -36,7 +52,7 @@ export default function GoogleLoginUI() {
             color="#1a73e8"
             mb={1}
           >
-            Google
+            Fundoo
           </Typography>
 
           {/* Heading */}
@@ -45,7 +61,7 @@ export default function GoogleLoginUI() {
           </Typography>
 
           <Typography variant="body1" color="text.secondary" mb={3}>
-            to continue to Google
+            to continue to Fundoo
           </Typography>
 
           {/* Email */}
@@ -53,6 +69,9 @@ export default function GoogleLoginUI() {
             label="Email or phone"
             fullWidth
             sx={{ mb: 2 }}
+            inputRef={emailRef}
+            error={!!errors.email}
+            helperText={errors.email}
           />
 
           <Link underline="none" fontWeight={500}>
@@ -65,6 +84,9 @@ export default function GoogleLoginUI() {
             type={showPassword ? "text" : "password"}
             fullWidth
             sx={{ mt: 3 }}
+            inputRef={passwordRef}
+            error={!!errors.password}
+            helperText={errors.password}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -101,7 +123,7 @@ export default function GoogleLoginUI() {
               mt: 4,
             }}
           >
-            <Link underline="none" fontWeight={500}>
+            <Link component={RouterLink} to="/signup" underline="none" fontWeight={500}>
               Create account
             </Link>
 
@@ -112,6 +134,7 @@ export default function GoogleLoginUI() {
                 textTransform: "none",
                 px: 4,
               }}
+              onClick={handleSubmit}
             >
               Next
             </Button>

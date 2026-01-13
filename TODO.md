@@ -1,0 +1,2 @@
+- [x] Update Signup.jsx: Import Link from react-router-dom and fix the "Sign in instead" link to navigate to /login
+- [x] Update Login.jsx: Import Link from react-router-dom, change branding from Google to Fundoo, fix the "Create account" link to navigate to /signup, and rename component to Login
