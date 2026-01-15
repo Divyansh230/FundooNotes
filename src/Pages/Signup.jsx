@@ -1,15 +1,24 @@
-import React, { useRef,useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import {Box, Card,CardContent,TextField,Typography,Button,Link,} from "@mui/material";
+import React, { useRef, useState } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+  Button,
+  Link,
+} from "@mui/material";
 import shield from "../assets/shield.jpeg";
 
 const Signup = () => {
+  const location = useLocation();
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
-
+  console.log(location);
   const [errors, setErrors] = useState({});
 
   const handleSubmit = () => {
@@ -148,7 +157,12 @@ const Signup = () => {
                     mt: 4,
                   }}
                 >
-                  <Link component={RouterLink} to="/login" underline="none" fontWeight={500}>
+                  <Link
+                    component={RouterLink}
+                    to="/login"
+                    underline="none"
+                    fontWeight={500}
+                  >
                     Sign in instead
                   </Link>
 
