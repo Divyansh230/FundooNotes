@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import { Tooltip } from "@mui/material";
@@ -6,7 +8,9 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import InputBase from "@mui/material/InputBase";
 import Box from "@mui/material/Box";
+
 import AccountMenu from "../AccountMenu/AccountMenu";
+
 import AppsIcon from "@mui/icons-material/Apps";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -16,30 +20,39 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
 export default function Header({ toggle }) {
-
-
-
   const [anchorEl, setAnchorEl] = useState(null);
+  const location = useLocation();
 
-   const handleOpen = (event) => {
+  const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
+  // ✅ Title logic
+  const getTitle = () => {
+    if (location.pathname === "/") {
+      return "FundooNotes";
+    }
+
+    const parts = location.pathname.split("/").filter(Boolean);
+    const last = parts[parts.length - 1];
+    return last.charAt(0).toUpperCase() + last.slice(1);
+  };
+
+  const title = getTitle(); // ✅ compute once
 
   return (
     <AppBar
-      position="fixed"   // 👈 recommended
+      position="fixed"
       sx={{
         bgcolor: "#fff",
         color: "#5f6368",
         boxShadow: "none",
         borderBottom: "1px solid #dadce0",
-        zIndex: 1201,     // 👈 drawer se upar rahe
+        zIndex: 1201,
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -53,14 +66,22 @@ export default function Header({ toggle }) {
           </Tooltip>
 
           <Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
-            <img
-              src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png"
-              alt="keep"
-              width="40"
-              height="40"
-            />
-            <Typography sx={{ ml: 1, fontSize: 22 }}>
-              FundooNotes
+            {title === "FundooNotes" && (
+              <img
+                src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png"
+                alt="keep"
+                width="40"
+                height="40"
+              />
+            )}
+
+            <Typography
+              sx={{
+                ml: title === "FundooNotes" ? 1 : 0,
+                fontSize: 22,
+              }}
+            >
+              {title}
             </Typography>
           </Box>
         </Box>
@@ -87,10 +108,7 @@ export default function Header({ toggle }) {
             }}
           >
             <SearchIcon sx={{ mr: 1 }} />
-            <InputBase
-              placeholder="Search"
-              sx={{ width: "100%" }}
-            />
+            <InputBase placeholder="Search" sx={{ width: "100%" }} />
           </Box>
         </Box>
 
@@ -122,8 +140,11 @@ export default function Header({ toggle }) {
           </Tooltip>
 
           <Tooltip title="Account">
-            <IconButton onClick={handleOpen}><AccountCircle /></IconButton>
+            <IconButton onClick={handleOpen}>
+              <AccountCircle />
+            </IconButton>
           </Tooltip>
+
           <AccountMenu anchorEl={anchorEl} onClose={handleClose} />
         </Box>
 

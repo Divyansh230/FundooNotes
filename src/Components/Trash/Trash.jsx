@@ -1,0 +1,11 @@
+import React from 'react'
+
+const Trash = () => {
+  return (
+    <>
+      <h1>Trash</h1>
+    </>
+  )
+}
+
+export default Trash

@@ -14,7 +14,12 @@ const Dashboard = () => {
     <>
       <Header toggle={toggle} />
       <Sidebar open={open} onClose={() => setOpen(false)} />
-      <Outlet/>
+      <div style={{
+        marginTop:64,
+        marginLeft:70,
+        padding:16
+      }}><Outlet/></div>
+      
     </>
   );
 };

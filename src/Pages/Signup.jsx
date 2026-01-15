@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Card,
@@ -10,18 +10,22 @@ import {
   Link,
 } from "@mui/material";
 import shield from "../assets/shield.jpeg";
+import signupUser from '../Routes/AuthRoute';
 
 const Signup = () => {
-  const location = useLocation();
+  //const location = useLocation();
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
-  console.log(location);
+  //console.log(location);
   const [errors, setErrors] = useState({});
+  const [loading,setLoading]=useState(false)
+  const navigate=useNavigate();
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async() => {
     const firstName = firstNameRef.current.value;
     const lastName = lastNameRef.current.value;
     const email = emailRef.current.value;
@@ -31,32 +35,58 @@ const Signup = () => {
     let newErrors = {};
 
     if (!firstName.match(/^[A-Za-z]{2,}$/)) {
-      newErrors.firstName = "Enter a valid first name";
+      newErrors.firstName = "*enter a valid first name";
     }
 
     if (!lastName.match(/^[A-Za-z]{2,}$/)) {
-      newErrors.lastName = "Enter a valid last name";
+      newErrors.lastName = "*enter a valid last name";
     }
 
     if (!email.endsWith("@gmail.com")) {
-      newErrors.email = "Email must end with @gmail.com";
+      newErrors.email = "*email must end with @gmail.com";
     }
 
     if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = "*password must be at least 8 characters";
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = "*passwords do not match";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-    } else {
-      setErrors({});
-      alert("Form submitted successfully");
+      return;
+    }
+
+    setErrors({});
+    setLoading(true);
+
+
+     const payload = {
+      firstName,
+      lastName,
+      email,
+      password,
+      service: "advance", // ❗ mandatory
+    };
+    try{
+      const response=await signupUser(payload)
+      console.log("Signup SuccessFull",response.data);
+
+      navigate("/login")
+    }
+    catch(error){
+       console.log(`Error is ${error}`)
+       alert(
+        "Signup Failed Please try again...!"
+       )
+    }finally{
+      setLoading(false)
     }
   };
+
+
 
   return (
     <>
@@ -120,9 +150,7 @@ const Signup = () => {
                   You'll need to confirm that this email belongs to you.
                 </Typography>
 
-                <Link underline="none" sx={{ fontWeight: 500 }}>
-                  Create a new Gmail address instead
-                </Link>
+                
 
                 {/* Password */}
                 <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
