@@ -4,4 +4,8 @@ const signupUser = () => {
     return api.post("/userSignup")
 }
 
-export default signupUser;
+const loginUser = () => {
+    return api.post("/login")
+}
+
+export { loginUser, signupUser };

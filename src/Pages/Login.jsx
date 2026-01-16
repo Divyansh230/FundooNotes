@@ -1,23 +1,36 @@
 import { useState, useRef } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { generatePath, Link as RouterLink, useNavigate } from "react-router-dom";
 import {Box,Card,CardContent,TextField, Typography, Button, Link, IconButton, InputAdornment,} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
+import { loginUser } from "../Routes/AuthRoute";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const emailRef = useRef();
   const passwordRef = useRef();
   const [errors, setErrors] = useState({});
+  const [loading,setLoading]=useState(false)
 
-  const handleSubmit = () => {
+  const navigate=useNavigate()
+
+  const handleSubmit = async() => {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
     let newErrors = {};
 
-    if (!email.endsWith("@gmail.com")) {
-      newErrors.email = "Email must end with @gmail.com";
+   
+
+    if(!email) newErrors.email="email required";
+    if(!password) newErrors.password="password is required"
+
+     if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+   if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      newErrors.email = "*Enter a valid gmail address";
     }
 
     if (password.length < 8) {
@@ -26,9 +39,24 @@ export default function Login() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-    } else {
-      setErrors({});
-      alert("Login successful");
+      return;
+    }
+
+    setErrors({});
+    setLoading(true);
+
+    try{
+      await loginUser({
+        email,
+        password,
+        service: "advance",
+      })
+      navigate('/Dashboard')
+    }catch(error){
+      general:"**invalid email or password"
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -74,9 +102,7 @@ export default function Login() {
             helperText={errors.email}
           />
 
-          <Link underline="none" fontWeight={500}>
-            Forgot email?
-          </Link>
+         
 
           {/* Password */}
           <TextField
@@ -101,19 +127,14 @@ export default function Login() {
             }}
           />
 
-          <Link underline="none" fontWeight={500} sx={{ mt: 1, display: "block" }}>
-            Forgot password?
-          </Link>
+         
 
           {/* Info */}
           <Typography variant="body2" color="text.secondary" mt={4}>
             Not your computer? Use Guest mode to sign in privately.
           </Typography>
 
-          <Link underline="none" fontWeight={500}>
-            Learn more
-          </Link>
-
+          
           {/* Actions */}
           <Box
             sx={{
