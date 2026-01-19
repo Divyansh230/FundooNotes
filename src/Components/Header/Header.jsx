@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import AppBar from "@mui/material/AppBar";
@@ -10,7 +10,7 @@ import InputBase from "@mui/material/InputBase";
 import Box from "@mui/material/Box";
 
 import AccountMenu from "../AccountMenu/AccountMenu";
-
+import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import AppsIcon from "@mui/icons-material/Apps";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,8 +18,10 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ViewAgendaOutlinedIcon from "@mui/icons-material/ViewAgendaOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { GlobalContext } from "../GlobalProvider";
 
 export default function Header({ toggle }) {
+  const { isGrid, setGrid } = useContext(GlobalContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
 
@@ -56,7 +58,6 @@ export default function Header({ toggle }) {
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
-
         {/* 🔵 LEFT */}
         <Box sx={{ display: "flex", alignItems: "center", width: 240 }}>
           <Tooltip title="Menu">
@@ -122,13 +123,16 @@ export default function Header({ toggle }) {
           }}
         >
           <Tooltip title="Refresh">
-            <IconButton><RefreshIcon /></IconButton>
+            <IconButton>
+              <RefreshIcon />
+            </IconButton>
           </Tooltip>
 
-          <Tooltip title="List view">
-            <IconButton><ViewAgendaOutlinedIcon /></IconButton>
+          <Tooltip title={isGrid ? "List view" : "Grid view"}>
+            <IconButton onClick={() => setGrid((prev) => !prev)}>
+              {isGrid ? <ViewAgendaOutlinedIcon /> : <GridViewOutlinedIcon />}
+            </IconButton>
           </Tooltip>
-
           <Tooltip title="Settings">
             <IconButton sx={{ mr: 5 }}>
               <SettingsOutlinedIcon />
@@ -136,7 +140,9 @@ export default function Header({ toggle }) {
           </Tooltip>
 
           <Tooltip title="Apps">
-            <IconButton><AppsIcon /></IconButton>
+            <IconButton>
+              <AppsIcon />
+            </IconButton>
           </Tooltip>
 
           <Tooltip title="Account">
@@ -147,7 +153,6 @@ export default function Header({ toggle }) {
 
           <AccountMenu anchorEl={anchorEl} onClose={handleClose} />
         </Box>
-
       </Toolbar>
     </AppBar>
   );
