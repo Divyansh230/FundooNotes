@@ -1,9 +1,10 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Popover, Tooltip } from "@mui/material";
 import CreateNote from "./CreateNote";
 import NotesGrid from "./NotesGrid";
-import NotesList from "./NotesList"
+import NotesList from "./NotesList";
 import { GlobalContext } from "../GlobalProvider";
+import api from "../../Services/axiosServices";
 
 /* 🎨 COLORS */
 const COLORS = [
@@ -35,33 +36,69 @@ const COLOR_NAMES = {
 };
 
 const Notes = () => {
-  const {isGrid,setIsGrid}=useContext(GlobalContext)
+  const { isGrid } = useContext(GlobalContext);
+
   const [notes, setNotes] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [activeNoteId, setActiveNoteId] = useState(null);
   const [editNote, setEditNote] = useState(null);
 
-  // ➕ add
-  const handleAddNote = (note) => {
-    setNotes((prev) => [note, ...prev]);
+  // 🔥 fetch only active notes
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const fetchNotes = async () => {
+    const response = await api.get("/notes?isArchived=false");
+    setNotes(response.data.reverse());
   };
 
-  // 🎨 color
-  const handleColorChange = (color) => {
+  const handleAddNote = async (note) => {
+    const response = await api.post("/notes", {
+      ...note,
+      isArchived: false,
+    });
+
+    setNotes((prev) => [response.data, ...prev]);
+  };
+
+  const handleColorChange = async (color) => {
+    const note = notes.find((n) => n.id === activeNoteId);
+    if (!note) return;
+
+    const updatedNote = { ...note, color };
+
+    await api.put(`/notes/${note.id}`, updatedNote);
+
     setNotes((prev) =>
-      prev.map((n) => (n.id === activeNoteId ? { ...n, color } : n)),
+      prev.map((n) => (n.id === note.id ? updatedNote : n))
     );
+
     setAnchorEl(null);
   };
 
-  // 🗑 delete
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    await api.delete(`/notes/${id}`);
     setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
-  // ✏ save edit
-  const saveEdit = () => {
-    setNotes((prev) => prev.map((n) => (n.id === editNote.id ? editNote : n)));
+  // 🔥 ARCHIVE LOGIC
+  const handleArchive = async (id) => {
+    await api.patch(`/notes/${id}`, {
+      isArchived: true,
+    });
+
+    // UI se remove
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const saveEdit = async () => {
+    await api.put(`/notes/${editNote.id}`, editNote);
+
+    setNotes((prev) =>
+      prev.map((n) => (n.id === editNote.id ? editNote : n))
+    );
+
     setEditNote(null);
   };
 
@@ -75,8 +112,10 @@ const Notes = () => {
           setAnchorEl={setAnchorEl}
           setActiveNoteId={setActiveNoteId}
           handleDelete={handleDelete}
+          handleArchive={handleArchive}
           editNote={editNote}
           setEditNote={setEditNote}
+          saveEdit={saveEdit}
         />
       ) : (
         <NotesList
@@ -84,8 +123,10 @@ const Notes = () => {
           setAnchorEl={setAnchorEl}
           setActiveNoteId={setActiveNoteId}
           handleDelete={handleDelete}
+          handleArchive={handleArchive}
           editNote={editNote}
           setEditNote={setEditNote}
+          saveEdit={saveEdit}
         />
       )}
 
@@ -96,7 +137,13 @@ const Notes = () => {
         onClose={() => setAnchorEl(null)}
       >
         <Box
-          sx={{ p: 1, width: 260, display: "flex", flexWrap: "wrap", gap: 1 }}
+          sx={{
+            p: 1,
+            width: 260,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
+          }}
         >
           {COLORS.map((color) => (
             <Tooltip key={color} title={COLOR_NAMES[color]}>
@@ -116,7 +163,7 @@ const Notes = () => {
         </Box>
       </Popover>
 
-      {/* click outside */}
+      {/* click outside save */}
       {editNote && (
         <Box onClick={saveEdit} sx={{ position: "fixed", inset: 0 }} />
       )}

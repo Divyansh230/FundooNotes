@@ -15,7 +15,8 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useState } from "react";
+
+import { useState, useRef } from "react";
 
 const breakpointColumnsObj = {
   default: 4,
@@ -31,8 +32,22 @@ const NotesGrid = ({
   handleDelete,
   editNote,
   setEditNote,
+  saveEdit,
+  handleArchive
 }) => {
   const [hoverId, setHoverId] = useState(null);
+
+  const titleRef = useRef(null);
+  const descRef = useRef(null);
+
+  const handleBlur = (e) => {
+    if (
+      e.relatedTarget !== titleRef.current &&
+      e.relatedTarget !== descRef.current
+    ) {
+      saveEdit();
+    }
+  };
 
   return (
     <Masonry
@@ -57,84 +72,101 @@ const NotesGrid = ({
             {editNote?.id === note.id ? (
               <>
                 <TextField
+                  inputRef={titleRef}
                   variant="standard"
                   fullWidth
-                  value={editNote.title}
+                  autoFocus
+                  placeholder="Title"
+                  value={editNote.title || ""}
                   onChange={(e) =>
                     setEditNote({ ...editNote, title: e.target.value })
                   }
+                  onBlur={handleBlur}
                 />
+
                 <TextField
+                  inputRef={descRef}
                   variant="standard"
                   fullWidth
                   multiline
-                  value={editNote.description}
+                  placeholder="Take a note..."
+                  value={editNote.description || ""}
                   onChange={(e) =>
                     setEditNote({
                       ...editNote,
                       description: e.target.value,
                     })
                   }
+                  onBlur={handleBlur}
                 />
               </>
             ) : (
               <>
                 {note.title && (
-                  <Typography fontWeight={600}>
-                    {note.title}
-                  </Typography>
+                  <Typography fontWeight={600}>{note.title}</Typography>
                 )}
-                <Typography variant="body2">
-                  {note.description}
-                </Typography>
+                <Typography variant="body2">{note.description}</Typography>
               </>
             )}
           </CardContent>
 
-          {hoverId === note.id && (
-            <Box sx={{ display: "flex", justifyContent: "space-between", px: 1 }}>
-              <Box>
-                <Tooltip title="Edit">
-                  <IconButton size="small" onClick={() => setEditNote(note)}>
-                    <EditOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+          {/* 🔥 Hover icons — height stable */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              px: 1,
+              pb: 1,
 
-                <Tooltip title="Color">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      setAnchorEl(e.currentTarget);
-                      setActiveNoteId(note.id);
-                    }}
-                  >
-                    <ColorLensOutlinedIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
+              opacity: hoverId === note.id ? 1 : 0,
+              transition: "opacity 0.2s ease",
+              pointerEvents: hoverId === note.id ? "auto" : "none",
+            }}
+          >
+            <Box>
+              <Tooltip title="Edit">
+                <IconButton size="small" onClick={() => setEditNote(note)}>
+                  <EditOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
 
+              <Tooltip title="Color">
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    setAnchorEl(e.currentTarget);
+                    setActiveNoteId(note.id);
+                  }}
+                >
+                  <ColorLensOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Image">
                 <IconButton size="small">
                   <ImageOutlinedIcon fontSize="small" />
                 </IconButton>
+              </Tooltip>
 
-                <IconButton size="small">
+              <Tooltip title="Archive">
+                <IconButton size="small" onClick={() => handleArchive(note.id)}>
                   <ArchiveOutlinedIcon fontSize="small" />
                 </IconButton>
+              </Tooltip>
 
+              <Tooltip title="More">
                 <IconButton size="small">
                   <MoreVertIcon fontSize="small" />
                 </IconButton>
-              </Box>
-
-              <Tooltip title="Delete">
-                <IconButton
-                  size="small"
-                  onClick={() => handleDelete(note.id)}
-                >
-                  <DeleteOutlineIcon fontSize="small" />
-                </IconButton>
               </Tooltip>
             </Box>
-          )}
+
+            <Tooltip title="Delete">
+              <IconButton size="small" onClick={() => handleDelete(note.id)}>
+                <DeleteOutlineIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Card>
       ))}
     </Masonry>

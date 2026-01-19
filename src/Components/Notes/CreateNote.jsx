@@ -10,13 +10,17 @@ import {
   ClickAwayListener,
   Tooltip,
 } from "@mui/material";
-import './notes.css';
+import "./notes.css";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
 import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import FormatColorTextIcon from "@mui/icons-material/FormatColorText";
+import AddAlertIcon from "@mui/icons-material/AddAlert";
+import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
+import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
 
 const COLORS = [
   "#ffffff",
@@ -30,7 +34,7 @@ const COLORS = [
   "#d7aefb",
   "#fdcfe8",
   "#e2f6d3",
-  "#E9967A"
+  "#E9967A",
 ];
 
 const COLOR_NAMES = {
@@ -45,7 +49,7 @@ const COLOR_NAMES = {
   "#d7aefb": "Purple",
   "#fdcfe8": "Pink",
   "#e2f6d3": "Green",
-  "#E9967A":"Dark Salmon"
+  "#E9967A": "Dark Salmon",
 };
 
 const CreateNote = ({ onAdd }) => {
@@ -62,10 +66,12 @@ const CreateNote = ({ onAdd }) => {
 
     if (title || description) {
       onAdd?.({
-        id: Date.now(),
+        // id: Date.now(),
         title,
         description,
         color: bgColor,
+        isArchived: false,
+        trash: false,
       });
     }
 
@@ -103,7 +109,7 @@ const CreateNote = ({ onAdd }) => {
               color: "#5f6368",
             }}
           >
-            <Tooltip title="New list" arrow>
+            <Tooltip title="Formatting Options" arrow>
               <IconButton size="small">
                 <CheckBoxOutlinedIcon fontSize="small" />
               </IconButton>
@@ -164,25 +170,20 @@ const CreateNote = ({ onAdd }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
+
                 mt: 1,
               }}
             >
-              <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3, // 🔥 perfect spacing
+                }}
+              >
                 <Tooltip title="New list" arrow>
                   <IconButton size="small">
-                    <CheckBoxOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Drawing" arrow>
-                  <IconButton size="small">
-                    <BrushOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Add image" arrow>
-                  <IconButton size="small">
-                    <ImageOutlinedIcon />
+                    <FormatColorTextIcon />
                   </IconButton>
                 </Tooltip>
 
@@ -194,6 +195,30 @@ const CreateNote = ({ onAdd }) => {
                     <ColorLensOutlinedIcon />
                   </IconButton>
                 </Tooltip>
+
+                <Tooltip title="Reminders" arrow>
+                  <IconButton size="small">
+                    <AddAlertIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Collaborators" arrow>
+                  <IconButton size="small">
+                    <PersonAddAlt1OutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Add image" arrow>
+                  <IconButton size="small">
+                    <ImageOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Archive">
+                <IconButton size="small" >
+                  <ArchiveOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
 
                 <Tooltip title="More" arrow>
                   <IconButton size="small">
@@ -219,7 +244,7 @@ const CreateNote = ({ onAdd }) => {
           anchorEl={anchorEl}
           onClose={() => setAnchorEl(null)}
           anchorOrigin={{ vertical: "top", horizontal: "left" }}
-          sx={{ display:"flex", top:38, }}
+          sx={{ display: "flex", top: 38 }}
         >
           <Box
             sx={{

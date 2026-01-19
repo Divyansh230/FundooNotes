@@ -1,11 +1,111 @@
-import React from 'react'
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+
+import UnarchiveOutlinedIcon from "@mui/icons-material/UnarchiveOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+
+import api from "../../Services/axiosServices";
+import { useEffect, useState } from "react";
 
 const Archive = () => {
-  return (
-    <>
-      Archive
-    </>
-  )
-}
+  const [archivedNotes, setArchivedNotes] = useState([]);
 
-export default Archive
+  const fetchArchivedNotes = async () => {
+    const res = await api.get("notes?isArchived=true") 
+    setArchivedNotes(res.data);
+  };
+
+  useEffect(() => {
+    fetchArchivedNotes();
+  }, []);
+
+  // 🔥 unarchive
+  const handleUnarchive = async (id) => {
+    await api.patch(`/notes/${id}`, {
+      isArchived: false,
+    });
+
+    setArchivedNotes((prev) =>
+      prev.filter((note) => note.id !== id)
+    );
+  };
+
+  // 🔥 permanent delete
+  const handleDelete = async (id) => {
+    await api.delete(`/notes/${id}`);
+
+    setArchivedNotes((prev) =>
+      prev.filter((note) => note.id !== id)
+    );
+  };
+
+  return (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h6" mb={2}>
+        Archived
+      </Typography>
+
+      {archivedNotes.length === 0 ? (
+        <Typography color="text.secondary">
+          No archived notes
+        </Typography>
+      ) : (
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          {archivedNotes.map((note) => (
+            <Card
+              key={note.id}
+              sx={{
+                width: 250,
+                backgroundColor: note.color || "#fff",
+              }}
+            >
+              <CardContent>
+                <Typography fontWeight={600}>
+                  {note.title}
+                </Typography>
+                <Typography variant="body2">
+                  {note.description}
+                </Typography>
+              </CardContent>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  px: 1,
+                  pb: 1,
+                }}
+              >
+                <Tooltip title="Unarchive">
+                  <IconButton
+                    size="small"
+                    onClick={() => handleUnarchive(note.id)}
+                  >
+                    <UnarchiveOutlinedIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Delete">
+                  <IconButton
+                    size="small"
+                    onClick={() => handleDelete(note.id)}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Card>
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default Archive;
