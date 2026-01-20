@@ -43,7 +43,7 @@ export default function Sidebar({ open }) {
         },
       }}
     >
-      <Box sx={{ mt: 1 }}>
+      <Box sx={{ height:"100%",display:'flex',flexDirection:'column',alignItems:'flex-start',pt:1 }}>
         <List>
           {menuItems.map((item) => {
             const isSelected = location.pathname === item.path;

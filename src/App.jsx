@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import ReactRoutes from './ReactRoutes'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Dashboard from './Pages/Dashboard'
@@ -21,7 +20,7 @@ const router=createBrowserRouter(
           index:true,
           element:<Notes/>
         },
-        
+
         {
           path:"reminders",
           element:<Reminders/>
@@ -52,8 +51,6 @@ const router=createBrowserRouter(
 )
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
      <RouterProvider router={router}/>

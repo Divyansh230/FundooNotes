@@ -61,7 +61,7 @@ export default function Header({ toggle }) {
         {/* 🔵 LEFT */}
         <Box sx={{ display: "flex", alignItems: "center", width: 240 }}>
           <Tooltip title="Menu">
-            <IconButton onClick={toggle}>
+            <IconButton sx={{mr:3,width:48,height:48}} onClick={toggle}>
               <MenuIcon />
             </IconButton>
           </Tooltip>

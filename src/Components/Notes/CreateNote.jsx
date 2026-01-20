@@ -71,7 +71,8 @@ const CreateNote = ({ onAdd }) => {
         description,
         color: bgColor,
         isArchived: false,
-        trash: false,
+        isTrashed: false,
+        // reminder:null
       });
     }
 

@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { Box, Popover, Tooltip } from "@mui/material";
+import { Box, Popover, Tooltip, Typography } from "@mui/material";
 import CreateNote from "./CreateNote";
 import NotesGrid from "./NotesGrid";
 import NotesList from "./NotesList";
 import { GlobalContext } from "../GlobalProvider";
 import api from "../../Services/axiosServices";
+import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 
-/* 🎨 COLORS */
 const COLORS = [
   "#ffffff",
   "#f28b82",
@@ -43,60 +43,60 @@ const Notes = () => {
   const [activeNoteId, setActiveNoteId] = useState(null);
   const [editNote, setEditNote] = useState(null);
 
-  // 🔥 fetch only active notes
+  const fetchNotes = async () => {
+    const res = await api.get("/notes?isArchived=false&isTrashed=false");
+    setNotes(res.data.reverse());
+  };
+
   useEffect(() => {
     fetchNotes();
   }, []);
 
-  const fetchNotes = async () => {
-    const response = await api.get("/notes?isArchived=false");
-    setNotes(response.data.reverse());
-  };
-
   const handleAddNote = async (note) => {
-    const response = await api.post("/notes", {
+    const res = await api.post("/notes", {
       ...note,
       isArchived: false,
     });
 
-    setNotes((prev) => [response.data, ...prev]);
+    setNotes((prev) => [res.data, ...prev]);
   };
 
+  // 🎨 COLOR CHANGE
   const handleColorChange = async (color) => {
-    const note = notes.find((n) => n.id === activeNoteId);
+    const note = notes.find((n) => n._id === activeNoteId);
     if (!note) return;
 
     const updatedNote = { ...note, color };
 
-    await api.put(`/notes/${note.id}`, updatedNote);
+    await api.put(`/notes/${note._id}`, updatedNote);
 
     setNotes((prev) =>
-      prev.map((n) => (n.id === note.id ? updatedNote : n))
+      prev.map((n) => (n._id === note._id ? updatedNote : n))
     );
 
     setAnchorEl(null);
   };
 
+  // 🗑 DELETE → TRASH
   const handleDelete = async (id) => {
-    await api.delete(`/notes/${id}`);
-    setNotes((prev) => prev.filter((n) => n.id !== id));
+    await api.patch(`/notes/${id}`, { isTrashed: true });
+
+    setNotes((prev) => prev.filter((n) => n._id !== id));
   };
 
-  // 🔥 ARCHIVE LOGIC
+  // 📦 ARCHIVE
   const handleArchive = async (id) => {
-    await api.patch(`/notes/${id}`, {
-      isArchived: true,
-    });
+    await api.patch(`/notes/${id}`, { isArchived: true });
 
-    // UI se remove
-    setNotes((prev) => prev.filter((n) => n.id !== id));
+    setNotes((prev) => prev.filter((n) => n._id !== id));
   };
 
+  // ✏️ SAVE EDIT
   const saveEdit = async () => {
-    await api.put(`/notes/${editNote.id}`, editNote);
+    await api.put(`/notes/${editNote._id}`, editNote);
 
     setNotes((prev) =>
-      prev.map((n) => (n.id === editNote.id ? editNote : n))
+      prev.map((n) => (n._id === editNote._id ? editNote : n))
     );
 
     setEditNote(null);
@@ -106,7 +106,22 @@ const Notes = () => {
     <Box sx={{ px: 3, pt: 2 }}>
       <CreateNote onAdd={handleAddNote} />
 
-      {isGrid ? (
+      {/* EMPTY STATE */}
+      {notes.length === 0 ? (
+        <Box
+          sx={{
+            height: "60vh",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#5f6368",
+          }}
+        >
+          <LightbulbOutlinedIcon sx={{ fontSize: 120, color: "#e0e0e0" }} />
+          <Typography fontSize={20}>Notes you add appear here</Typography>
+        </Box>
+      ) : isGrid ? (
         <NotesGrid
           notes={notes}
           setAnchorEl={setAnchorEl}
@@ -130,21 +145,13 @@ const Notes = () => {
         />
       )}
 
-      {/* 🎨 COLOR PICKER */}
+      {/* COLOR PICKER */}
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <Box
-          sx={{
-            p: 1,
-            width: 260,
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-          }}
-        >
+        <Box sx={{ p: 1, width: 260, display: "flex", flexWrap: "wrap", gap: 1 }}>
           {COLORS.map((color) => (
             <Tooltip key={color} title={COLOR_NAMES[color]}>
               <Box
@@ -162,11 +169,6 @@ const Notes = () => {
           ))}
         </Box>
       </Popover>
-
-      {/* click outside save */}
-      {editNote && (
-        <Box onClick={saveEdit} sx={{ position: "fixed", inset: 0 }} />
-      )}
     </Box>
   );
 };

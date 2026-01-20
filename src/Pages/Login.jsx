@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { generatePath, Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {Box,Card,CardContent,TextField, Typography, Button, Link, IconButton, InputAdornment,} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -10,7 +10,6 @@ export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [errors, setErrors] = useState({});
-  const [loading,setLoading]=useState(false)
 
   const navigate=useNavigate()
 
@@ -19,7 +18,7 @@ export default function Login() {
     const password = passwordRef.current.value;
     let newErrors = {};
 
-   
+
 
     if(!email) newErrors.email="email required";
     if(!password) newErrors.password="password is required"
@@ -43,7 +42,6 @@ export default function Login() {
     }
 
     setErrors({});
-    setLoading(true);
 
     try{
       await loginUser({
@@ -51,12 +49,9 @@ export default function Login() {
         password,
         service: "advance",
       })
-      navigate('/Dashboard')
+      navigate('/')
     }catch(error){
-      general:"**invalid email or password"
-    }
-    finally{
-      setLoading(false)
+      setErrors({ general: "**invalid email or password" });
     }
   };
 

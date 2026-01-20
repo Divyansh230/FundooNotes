@@ -1,3 +1,20 @@
 {
-  "notes": []
+  "notes": [
+    {
+      "id": "b41b",
+      "title": "",
+      "description": "fhgj",
+      "color": "#ffffff",
+      "isArchived": false,
+      "isTrashed": false
+    },
+    {
+      "id": "3ad3",
+      "title": "",
+      "description": "ghjk",
+      "color": "#ffffff",
+      "isArchived": false,
+      "isTrashed": false
+    }
+  ]
 }

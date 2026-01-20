@@ -67,9 +67,7 @@ const AccountMenu = ({ anchorEl, onClose }) => {
       {/* Header row */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
         <Box sx={{ flexGrow: 1 }}>
-          <Typography align="center" variant="body2" color="text.secondary">
-            {email}
-          </Typography>
+          
         </Box>
         <IconButton size="small" onClick={onClose}>
           <CloseIcon />
@@ -110,7 +108,7 @@ const AccountMenu = ({ anchorEl, onClose }) => {
             px: 3,
           }}
         >
-          Manage your Google Account
+          {email}
         </Button>
       </Box>
 

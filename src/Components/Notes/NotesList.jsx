@@ -15,6 +15,9 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AddAlertIcon from "@mui/icons-material/AddAlert";
+import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
+
 
 import { useState } from "react";
 
@@ -63,9 +66,13 @@ const NotesList = ({
                 borderRadius: 2,
                 boxShadow: "0 1px 6px rgba(32, 33, 36, .28)",
                 cursor: "pointer",
+
+                minHeight: 135,              // 👈 height increase
+    display: "flex",
+    flexDirection: "column",
               }}
             >
-              <CardContent sx={{ p: 1.5 }}>
+              <CardContent sx={{ p: 1.5,flexGrow:1 }}>
                 {editNote?.id === note.id ? (
                   <>
                     <TextField
@@ -117,24 +124,22 @@ const NotesList = ({
                   justifyContent: "space-between",
                   px: 1,
                   pb: 1,
-
+                  mt:"auto",
                   opacity: hoverId === note.id ? 1 : 0,
                   transition: "opacity 0.2s ease",
                   pointerEvents:
                     hoverId === note.id ? "auto" : "none",
                 }}
               >
-                <Box>
-                  <Tooltip title="Edit">
-                    <IconButton
-                      size="small"
-                      onClick={() => setEditNote(note)}
-                    >
-                      <EditOutlinedIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                <Box
+                  sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3, // 🔥 perfect spacing
+                }}
+                >
 
-                  <Tooltip title="Color">
+                   <Tooltip title="Color">
                     <IconButton
                       size="small"
                       onClick={(e) => {
@@ -145,6 +150,20 @@ const NotesList = ({
                       <ColorLensOutlinedIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
+                  
+                 <Tooltip title="Reminders" arrow>
+                  <IconButton size="small">
+                    <AddAlertIcon />
+                  </IconButton>
+                </Tooltip>
+
+ <Tooltip title="Collaborators" arrow>
+                  <IconButton size="small">
+                    <PersonAddAlt1OutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+
+                 
 
                   <Tooltip title="Add image">
                     <IconButton size="small">
