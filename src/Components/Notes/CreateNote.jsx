@@ -67,6 +67,7 @@ const CreateNote = ({ onAdd }) => {
     if (title || description) {
       onAdd?.({
         // id: Date.now(),
+        use:localStorage.getItem('userId'),
         title,
         description,
         color: bgColor,

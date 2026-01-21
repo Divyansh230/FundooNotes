@@ -5,18 +5,31 @@ import {
   Typography,
   IconButton,
   Tooltip,
+  Popover
 } from "@mui/material";
 
 import UnarchiveOutlinedIcon from "@mui/icons-material/UnarchiveOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
-
+import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
+import AddAlertIcon from "@mui/icons-material/AddAlert";
 import api from "../../Services/axiosServices";
 import { useEffect, useState } from "react";
+const COLORS = [
+  { name: "White", value: "#ffffff" },
+  { name: "Red", value: "#f28b82" },
+  { name: "Orange", value: "#fbbc04" },
+  { name: "Yellow", value: "#fff475" },
+  { name: "Green", value: "#ccff90" },
+  { name: "Teal", value: "#a7ffeb" },
+  { name: "Sky Blue", value: "#cbf0f8" },
+  { name: "Blue", value: "#aecbfa" },
+  { name: "Purple", value: "#d7aefb" },
+];
 
 const Archive = () => {
   const [archivedNotes, setArchivedNotes] = useState([]);
-
+  const [anchorEl, setAnchorEl] = useState(null);
   const fetchArchivedNotes = async () => {
     const res = await api.get("/notes?isArchived=true");
     setArchivedNotes(res.data);
@@ -44,6 +57,35 @@ const Archive = () => {
     setArchivedNotes((prev) =>
       prev.filter((note) => note.id !== id)
     );
+  };
+
+  const handleColorChange = async (colorObj) => {
+    if (!activeNoteId) return;
+
+    const userId = localStorage.getItem("userId");
+    const res = await api.get(`/users/${userId}`);
+
+    const updatedNotes = res.data.notes.map((note) =>
+      note.id === activeNoteId
+        ? { ...note, color: colorObj }
+        : note
+    );
+
+    await api.put(`/users/${userId}`, {
+      ...res.data,
+      notes: updatedNotes,
+    });
+
+    setArchivedNotes((prev) =>
+      prev.map((note) =>
+        note.id === activeNoteId
+          ? { ...note, color: colorObj }
+          : note
+      )
+    );
+
+    setAnchorEl(null);
+    setActiveNoteId(null);
   };
 
   // ✅ EMPTY STATE (Google Keep style)
@@ -108,6 +150,26 @@ const Archive = () => {
                 pb: 1,
               }}
             >
+
+               <Tooltip title="Change color">
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    setAnchorEl(e.currentTarget);
+                    setActiveNoteId(note.id);
+                  }}
+                >
+                  <ColorLensOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+
+
+              <Tooltip title="Reminders" arrow>
+                  <IconButton size="small">
+                    <AddAlertIcon />
+                  </IconButton>
+                </Tooltip>
+
               <Tooltip title="Unarchive">
                 <IconButton
                   size="small"
@@ -129,6 +191,30 @@ const Archive = () => {
           </Card>
         ))}
       </Box>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+      >
+        <Box sx={{ display: "flex", p: 1, gap: 1 }}>
+          {COLORS.map((c) => (
+            <Tooltip key={c.value} title={c.name}>
+              <Box
+                onClick={() => handleColorChange(c)}
+                sx={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  bgcolor: c.value,
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </Tooltip>
+          ))}
+        </Box>
+      </Popover>
     </Box>
   );
 };

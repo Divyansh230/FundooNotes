@@ -71,7 +71,7 @@ const NotesGrid = ({
             width: "100%",
             minHeight:120,
             display: "flex",
-            flexDirection: "column",
+          flexDirection: "column",
           }}
         >
           <CardContent sx={{ p: 1.5,flexGrow:1 }}>

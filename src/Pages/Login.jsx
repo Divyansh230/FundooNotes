@@ -3,7 +3,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {Box,Card,CardContent,TextField, Typography, Button, Link, IconButton, InputAdornment,} from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { loginUser } from "../Routes/AuthRoute";
+import { login } from "../Routes/AuthRoute";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,11 +44,12 @@ export default function Login() {
     setErrors({});
 
     try{
-      await loginUser({
+      const user=await login(
         email,
         password,
-        service: "advance",
-      })
+      )
+      console.log("[[[[[[[[[[[[",user)
+      localStorage.setItem("userId",user.id)
       navigate('/')
     }catch(error){
       setErrors({ general: "**invalid email or password" });

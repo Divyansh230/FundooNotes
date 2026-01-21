@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Popover,
   Box,
@@ -11,42 +11,52 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
+import api from "../../Services/axiosServices";
 
 const AccountMenu = ({ anchorEl, onClose }) => {
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
-  const fullName = "divyansh singh";
-  const email = "divyanshsinghh2304@gmail.com";
+  const [user, setUser] = useState(null);
 
-  const firstName = fullName.split(" ")[0];
-  const initial = firstName.charAt(0).toUpperCase();
+  const userId = localStorage.getItem("userId");
 
-  const googlePopupButtonStyle = {
-  height: 52,
-  bgcolor:"white",                    
-  borderRadius: "999px 16px 16px 999px", 
-  textTransform: "none",
-  fontWeight: 500,
-  borderColor: "#dadce0",
-  color: "#3c4043",
-  "&:hover": {
-    backgroundColor: "#f1f3f4",
-    borderColor: "#dadce0",
-  },
-};
-  const googlePopupButtonStyle2 = {
-  height: 52,
-  bgcolor:"white",                    
-  borderRadius: "16px 999px 999px 16px", 
-  textTransform: "none",
-  fontWeight: 500,
-  borderColor: "#dadce0",
-  color: "#3c4043",
-  "&:hover": {
-    backgroundColor: "#f1f3f4",
-    borderColor: "#dadce0",
-  },
-};
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchUser = async () => {
+      try {
+        const res = await api.get(`/users/${userId}`);
+        setUser(res.data);
+      } catch (err) {
+        console.error("Failed to load user");
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    onClose();
+    navigate("/login", { replace: true });
+  };
+
+  const handleSignup=()=>{
+    localStorage.removeItem("userId");
+    onClose()
+    navigate("/signup",{replace:true});
+  }
+
+  
+  if (!user) return null;
+
+  const fullName = `${user.firstName} ${user.lastName}`;
+  const firstName = user.firstName;
+  const email = user.email;
+  const initial = firstName?.charAt(0)?.toUpperCase();
 
   return (
     <Popover
@@ -60,21 +70,19 @@ const AccountMenu = ({ anchorEl, onClose }) => {
           width: 420,
           borderRadius: 4,
           p: 2,
-          bgcolor:"#e6f7ff"
+          bgcolor: "#e6f7ff",
         },
       }}
     >
-      {/* Header row */}
+      
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-        <Box sx={{ flexGrow: 1 }}>
-          
-        </Box>
+        <Box sx={{ flexGrow: 1 }} />
         <IconButton size="small" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </Box>
 
-      {/* Avatar */}
+      
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Avatar
           sx={{
@@ -89,20 +97,16 @@ const AccountMenu = ({ anchorEl, onClose }) => {
       </Box>
 
       {/* Greeting */}
-      <Typography
-        align="center"
-        variant="h6"
-        sx={{ mt: 1, fontWeight: 500 }}
-      >
-        Hi, {firstName.charAt(0).toUpperCase() + firstName.slice(1)}!
+      <Typography align="center" variant="h6" sx={{ mt: 1, fontWeight: 500 }}>
+        Hi, {firstName}!
       </Typography>
 
-      {/* Manage account */}
+      {/* Email */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Button
           variant="none"
           sx={{
-            bgcolor:"white",
+            bgcolor: "white",
             borderRadius: 5,
             textTransform: "none",
             px: 3,
@@ -118,7 +122,14 @@ const AccountMenu = ({ anchorEl, onClose }) => {
           fullWidth
           variant="none"
           startIcon={<AddIcon />}
-          sx={googlePopupButtonStyle}
+          sx={{
+            height: 52,
+            bgcolor: "white",
+            borderRadius: "999px 16px 16px 999px",
+            textTransform: "none",
+            fontWeight: 500,
+          }}
+          onClick={handleSignup}
         >
           Add account
         </Button>
@@ -127,7 +138,14 @@ const AccountMenu = ({ anchorEl, onClose }) => {
           fullWidth
           variant="none"
           startIcon={<LogoutIcon />}
-          sx={googlePopupButtonStyle2}
+          sx={{
+            height: 52,
+            bgcolor: "white",
+            borderRadius: "16px 999px 999px 16px",
+            textTransform: "none",
+            fontWeight: 500,
+          }}
+          onClick={handleLogout}
         >
           Sign out
         </Button>
@@ -135,7 +153,6 @@ const AccountMenu = ({ anchorEl, onClose }) => {
 
       <Divider sx={{ my: 2 }} />
 
-      {/* Footer */}
       <Typography align="center" variant="caption" color="text.secondary">
         Privacy Policy • Terms of Service
       </Typography>

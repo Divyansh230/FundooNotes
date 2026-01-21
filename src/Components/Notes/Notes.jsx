@@ -43,60 +43,78 @@ const Notes = () => {
   const [activeNoteId, setActiveNoteId] = useState(null);
   const [editNote, setEditNote] = useState(null);
 
+  
   const fetchNotes = async () => {
-    const res = await api.get("/notes?isArchived=false&isTrashed=false");
+    const uid= localStorage.getItem("userId")
+    console.log(uid)
+    const res = await api.get(`/notes?isArchived=false&use=${uid}&isTrashed=false`);
     setNotes(res.data.reverse());
   };
 
   useEffect(() => {
-    fetchNotes();
-  }, []);
+    console.log("Fetching notes...")
+    fetchNotes()
+  },[]);
 
   const handleAddNote = async (note) => {
     const res = await api.post("/notes", {
       ...note,
+      color: "#ffffff",
       isArchived: false,
+      isTrashed: false,
     });
 
     setNotes((prev) => [res.data, ...prev]);
   };
 
-  // 🎨 COLOR CHANGE
-  const handleColorChange = async (color) => {
-    const note = notes.find((n) => n._id === activeNoteId);
-    if (!note) return;
+  
+ const handleColorChange = async (color) => {
+  const note = notes.find((n) => n.id === activeNoteId);
+  if (!note) return;
 
-    const updatedNote = { ...note, color };
+  
+  setNotes((prev) =>
+    prev.map((n) =>
+      n.id === note.id ? { ...n, color } : n
+    )
+  );
 
-    await api.put(`/notes/${note._id}`, updatedNote);
+  setAnchorEl(null);
 
+  try {
+    
+    await api.put(`/notes/${note.id}`, {
+      ...note,
+      color,
+    });
+  } catch (err) {
+    console.error("Color update failed", err);
+
+    
     setNotes((prev) =>
-      prev.map((n) => (n._id === note._id ? updatedNote : n))
+      prev.map((n) =>
+        n.id === note.id ? note : n
+      )
     );
-
-    setAnchorEl(null);
-  };
-
-  // 🗑 DELETE → TRASH
+  }
+};
+  
   const handleDelete = async (id) => {
     await api.patch(`/notes/${id}`, { isTrashed: true });
-
-    setNotes((prev) => prev.filter((n) => n._id !== id));
+    setNotes((prev) => prev.filter((n) => n.id !== id));
   };
-
-  // 📦 ARCHIVE
+ 
   const handleArchive = async (id) => {
     await api.patch(`/notes/${id}`, { isArchived: true });
-
-    setNotes((prev) => prev.filter((n) => n._id !== id));
+    setNotes((prev) => prev.filter((n) => n.id !== id));
   };
 
-  // ✏️ SAVE EDIT
+  
   const saveEdit = async () => {
-    await api.put(`/notes/${editNote._id}`, editNote);
+    const res = await api.put(`/notes/${editNote.id}`, editNote);
 
     setNotes((prev) =>
-      prev.map((n) => (n._id === editNote._id ? editNote : n))
+      prev.map((n) => (n.id === editNote.id ? res.data : n))
     );
 
     setEditNote(null);
@@ -119,7 +137,9 @@ const Notes = () => {
           }}
         >
           <LightbulbOutlinedIcon sx={{ fontSize: 120, color: "#e0e0e0" }} />
-          <Typography fontSize={20}>Notes you add appear here</Typography>
+          <Typography fontSize={20}>
+            Notes you add appear here
+          </Typography>
         </Box>
       ) : isGrid ? (
         <NotesGrid
@@ -145,13 +165,21 @@ const Notes = () => {
         />
       )}
 
-      {/* COLOR PICKER */}
+      {/* 🎨 COLOR PICKER */}
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
       >
-        <Box sx={{ p: 1, width: 260, display: "flex", flexWrap: "wrap", gap: 1 }}>
+        <Box
+          sx={{
+            p: 1,
+            width: 260,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
+          }}
+        >
           {COLORS.map((color) => (
             <Tooltip key={color} title={COLOR_NAMES[color]}>
               <Box

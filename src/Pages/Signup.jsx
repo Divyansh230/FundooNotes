@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import shield from "../assets/shield.jpeg";
-import {signupUser} from "../Routes/AuthRoute";
+import { signup } from "../Routes/AuthRoute";
 
 const Signup = () => {
   const firstNameRef = useRef(null);
@@ -38,16 +38,17 @@ const Signup = () => {
 
     let newErrors = {};
 
-    if(!firstName)newErrors.firstName="*first Name is required"
-    if(!email)newErrors.email="*email is required"
-    if(!password)newErrors.password="*password is required"
-    if(!confirmPassword)newErrors.confirmPassword="*confirm password is required"
+    if (!firstName) newErrors.firstName = "*first Name is required";
+    if (!email) newErrors.email = "*email is required";
+    if (!password) newErrors.password = "*password is required";
+    if (!confirmPassword)
+      newErrors.confirmPassword = "*confirm password is required";
 
-     if (Object.keys(newErrors).length > 0) {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    newErrors={}
+    newErrors = {};
 
     if (!/^[A-Za-z]{2,}$/.test(firstName))
       newErrors.firstName = "*enter a valid first name";
@@ -55,10 +56,9 @@ const Signup = () => {
     if (!/^[A-Za-z]{2,}$/.test(lastName))
       newErrors.lastName = "*enter a valid last name";
 
-   if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
-  newErrors.email = "*not a valid gmail address";
-}
-
+    if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      newErrors.email = "*not a valid gmail address";
+    }
 
     if (password.length < 8)
       newErrors.password = "*eassword must be at least 8 characters";
@@ -74,7 +74,7 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await signupUser({
+      await signup({
         firstName,
         lastName,
         email,
@@ -82,8 +82,13 @@ const Signup = () => {
         service: "advance",
       });
       navigate("/login");
-    } catch {
-      alert("Signup Failed. Please try again!");
+    } catch (err) {
+      console.log(err)
+      if (err.message === "EMAIL_EXISTS") {
+        setErrors({ email: "Email already registered" });
+      } else {
+        alert("Signup failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -99,7 +104,7 @@ const Signup = () => {
         bgcolor: "#f8f9fa",
       }}
     >
-      <Card sx={{ width: 900,height:500, p: 2 }}>
+      <Card sx={{ width: 900, height: 500, p: 2 }}>
         <CardContent>
           <Box sx={{ display: "flex" }}>
             {/* LEFT – 60% */}
@@ -153,11 +158,7 @@ const Signup = () => {
                         <IconButton
                           onClick={() => setShowPassword(!showPassword)}
                         >
-                          {showPassword ? (
-                            <VisibilityOff />
-                          ) : (
-                            <Visibility />
-                          )}
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
                     ),
@@ -192,7 +193,8 @@ const Signup = () => {
               </Box>
 
               <Typography variant="body2" color="text.secondary">
-                Use 8 or more characters with a mix of letters, numbers & symbols
+                Use 8 or more characters with a mix of letters, numbers &
+                symbols
               </Typography>
 
               <Box

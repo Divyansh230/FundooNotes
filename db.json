@@ -1,20 +1,31 @@
 {
   "notes": [
     {
-      "id": "b41b",
-      "title": "",
-      "description": "fhgj",
-      "color": "#ffffff",
-      "isArchived": false,
+      "id": "6922",
+      "use": "f605",
+      "title": "gfhj",
+      "description": "ghjkj",
+      "color": "#fdcfe8",
+      "isArchived": true,
       "isTrashed": false
+    }
+  ],
+  "users": [
+    {
+      "id": "f605",
+      "firstName": "Divyansh",
+      "lastName": "Singh",
+      "email": "divyanshsinghh2304@gmail.com",
+      "password": "123456789",
+      "service": "advance"
     },
     {
-      "id": "3ad3",
-      "title": "",
-      "description": "ghjk",
-      "color": "#ffffff",
-      "isArchived": false,
-      "isTrashed": false
+      "id": "91ac",
+      "firstName": "Divyansh",
+      "lastName": "Singh",
+      "email": "a@gmail.com",
+      "password": "12345678",
+      "service": "advance"
     }
   ]
 }
