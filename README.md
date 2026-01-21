@@ -1,16 +1,158 @@
-# React + Vite
+# 📝 FundooNotes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FundooNotes is a **full‑stack note‑taking web application** inspired by Google Keep. It allows users to create, manage, organize, and customize notes with features like color updates, archiving, deletion, and real‑time UI updates.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+* 🔐 User Authentication (Login / Signup)
+* 📝 Create, Edit & Delete Notes
+* 🎨 Change Note Colors (Optimistic UI update)
+* 📌 Pin & Unpin Notes
+* 🗄️ Archive / Unarchive Notes
+* 🗑️ Trash Notes (Soft delete)
+* 📋 Grid View & List View
+* ⚡ Fast and responsive UI
+* 🌐 REST API integration
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+
+* React.js
+* Material UI (MUI)
+* Context API (Global State Management)
+* Axios
+
+### Backend
+
+* json-server
+
+---
+
+## 📂 Project Structure
+
+```
+FundooNotes/
+│
+├── client/                 # React Frontend
+│   ├── components/
+│   ├── pages/
+│   ├── context/
+│   ├── services/
+│   └── App.js
+│
+├── server/                 # Backend
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   └── server.js
+│
+└── README.md
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/Divyansh230/FundooNotes.git
+cd fundoonotes
+```
+
+---
+
+### 2️⃣ Backend Setup
+
+
+
+
+
+Run backend server:
+
+```bash
+json-server --watch db.json
+```
+
+---
+
+### 3️⃣ Frontend Setup
+
+```bash
+cd client
+npm install
+npm start
+```
+
+Frontend will run on:
+
+```
+http://localhost:3000
+```
+
+Backend will run on:
+
+```
+http://localhost:5000
+```
+
+---
+
+## 🔁 API Flow Example
+
+* Notes fetched using `GET /notes`
+* Create note: `POST /notes`
+* Update note color: `PUT /notes/:id`
+* Archive note: `PUT /notes/archive/:id`
+* Delete note: `DELETE /notes/:id`
+
+Optimistic UI is used — UI updates first, API sync happens afterward.
+
+---
+
+## 📸 Screenshots
+
+> ![alt text](./src/assets/image.png)
+
+---
+
+## 🧠 Key Concepts Used
+
+* React Hooks (`useState`, `useEffect`, `useContext`)
+* Optimistic UI updates
+* RESTful APIs
+* MongoDB schema design
+* Component‑based architecture
+
+---
+
+## 👨‍💻 Developer
+
+**Divyansh Singh**
+Full Stack Developer | MERN Stack | AI Enthusiast
+
+---
+
+## ⭐ Future Enhancements
+
+* 🔍 Search Notes
+* 🏷️ Labels / Tags
+* 🤝 Collaboration
+* ☁️ Cloud sync
+* 📱 Mobile responsiveness improvement
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+> Made with ❤️ by Divyansh Singh
