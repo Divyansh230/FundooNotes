@@ -1,15 +1,6 @@
 {
   "notes": [
     {
-      "id": "6922",
-      "use": "f605",
-      "title": "gfhj",
-      "description": "ghjkj",
-      "color": "#fdcfe8",
-      "isArchived": true,
-      "isTrashed": false
-    },
-    {
       "id": "a48c",
       "use": "f605",
       "title": "Hello",
@@ -23,7 +14,7 @@
       "use": "f605",
       "title": "How are You Dude",
       "description": "Dude",
-      "color": "#ffffff",
+      "color": "#f28b82",
       "isArchived": false,
       "isTrashed": false
     },
@@ -32,7 +23,34 @@
       "use": "f605",
       "title": "Hello",
       "description": "World",
-      "color": "#ffffff",
+      "color": "#aecbfa",
+      "isArchived": false,
+      "isTrashed": false
+    },
+    {
+      "id": "1c1c",
+      "use": "f605",
+      "title": "sdfg",
+      "description": "",
+      "color": "#fff475",
+      "isArchived": false,
+      "isTrashed": false
+    },
+    {
+      "id": "5bd9",
+      "use": "f605",
+      "title": "hello Doodle",
+      "description": "",
+      "color": "#f28b82",
+      "isArchived": false,
+      "isTrashed": false
+    },
+    {
+      "id": "9e54",
+      "use": "f605",
+      "title": "Hello",
+      "description": "Doodles",
+      "color": "#ccff90",
       "isArchived": false,
       "isTrashed": false
     }

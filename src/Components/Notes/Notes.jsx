@@ -59,7 +59,7 @@ const Notes = () => {
   const handleAddNote = async (note) => {
     const res = await api.post("/notes", {
       ...note,
-      color: "#ffffff",
+      color: note.color,
       isArchived: false,
       isTrashed: false,
     });
