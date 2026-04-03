@@ -5,35 +5,43 @@ import os
 
 class Logger:
     def __init__(self):
-        log_path = "app/logs/app.log"
-        os.makedirs("app/logs", exist_ok=True)        
+        log_dir = "app/logs"
+        log_file = f"{log_dir}/app.log"
+
+        # folder ensure
+        os.makedirs(log_dir, exist_ok=True)
+
+        # default logger remove
         logger.remove()
+
+        # console logging
         logger.add(
             sys.stdout,
             level="INFO",
             format="{time} | {level} | {message}"
         )
 
+        # file logging
         logger.add(
-            log_path,
+            log_file,
             rotation="1 MB",
-            retention="10 days",
+            retention="7 days",
             level="INFO",
             format="{time} | {level} | {message}"
         )
 
-    def info(self, message):
-        logger.info(message)
+    def info(self, msg):
+        logger.info(msg)
 
-    def error(self, message):
-        logger.error(message)
+    def error(self, msg):
+        logger.error(msg)
 
-    def warning(self, message):
-        logger.warning(message)
+    def warning(self, msg):
+        logger.warning(msg)
 
-    def debug(self, message):
-        logger.debug(message)
+    def debug(self, msg):
+        logger.debug(msg)
 
 
-# 🔥 Single instance (global use)
+## singleton instance
 logger_instance = Logger()
