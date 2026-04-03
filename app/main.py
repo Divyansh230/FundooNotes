@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.database import db_instance
 from app.routes.note_routes import router as note_router
 from app.models import note,label,associations
-
+from app.routes.label_routes import router as label_router
 ## Table Creation
 db_instance.get_base().metadata.create_all(bind=db_instance.get_engine())
 
@@ -13,3 +13,4 @@ def read_root():
     return {'Hello':'World'}
 
 app.include_router(note_router)
+app.include_router(label_router)

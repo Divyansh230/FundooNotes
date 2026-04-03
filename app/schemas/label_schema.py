@@ -1,4 +1,4 @@
-from pydatic import BaseModel
+from pydantic import BaseModel
 
 class LabelCreate(BaseModel):
     name:str
@@ -11,4 +11,4 @@ class LabelResponse(BaseModel):
     name:str
 
     class Config:
-        orm_mode=True
+        from_attributes=True
