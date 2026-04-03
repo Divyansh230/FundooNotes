@@ -1,7 +1,7 @@
 from app.models.note import Note
 from app.utils.logger import logger_instance
 from fastapi import HTTPException
-
+from app.models.label import Label
 ## Class for note service
 class NoteService:
     def create_note(self,note_data,db):
@@ -64,3 +64,45 @@ class NoteService:
         logger_instance.info('Note deleted successfully')
         return {'mssge':'Note deleted successfully'}
         
+
+    def add_label_to_note(self,note_id,label_id,db):
+        note=self.get_note_by_id(note_id,db)
+        label=db.query(Label).filter(Label.id==label_id).first()
+        if not label:
+            raise HTTPException(status_code=404,detail='Label not found')
+
+        
+        if not note or not label:
+            raise HTTPException(status_code=404,detail="Note or Label not found")
+
+        note.labels.append(label)
+        db.commit()
+        db.refresh(note)
+
+        logger_instance.info('Label added to note successfully')
+        return note
+
+
+    def remove_label_from_note(self,note_id,label_id,db):
+        note=self.get_note_by_id(note_id,db)
+        label=db.query(Label).filter(Label.id==label_id).first()
+        if not label:
+            raise HTTPException(status_code=404,detail='Label not found')
+
+        
+        if not note or not label:
+            raise HTTPException(status_code=404,detail="Note or Label not found")
+
+        note.labels.remove(label)
+        db.commit()
+        db.refresh(note)
+
+        logger_instance.info('Label removed from note successfully')
+        return note
+
+
+    def get_note_with_label(self,note_id,db):
+        note=db.query(Note).filter(Note.id==note_id).first()
+        if not note:
+            raise HTTPException(status_code=404,detail='Note not found')
+        return note

@@ -36,3 +36,22 @@ def update_note(note_id:int,note_data:NoteUpdate,db:Session=Depends(db_instance.
 @router.delete('/{note_id}',response_model=NoteResponse)
 def delete_note(note_id:int,db:Session=Depends(db_instance.get_db)):
     return note_service.delete_note(note_id,db)
+
+
+## Add label to Note
+@router.post('/{note_id}/labels/{label_id}')
+def add_label(note_id:int,labe_id:int,db:Session=Depends(db_instance.get_db)):
+    return note_service.add_label_to_note(note_id,label_id,db)
+
+## Remove Label from Note
+@router.delete('/{note_id}/labels/{label_id}')
+def remove_label(note_id:int,labe_id:int,db:Session=Depends(db_instance.get_db)):
+    return note_service.remove_label_from_note(note_id,label_id,db)
+
+## Get Note with Label
+@router.get('/{note_id}/labels')
+def get_note_with_label(note_id:int,db:Session=Depends(db_instance.get_db)):
+    return note_service.get_note_with_label(note_id,db)
+
+
+    
