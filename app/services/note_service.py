@@ -1,5 +1,5 @@
-from model.note import Note
-from utils.logger import logger_instance
+from app.models.note import Note
+from app.utils.logger import logger_instance
 from fastapi import HTTPException
 
 ## Class for note service
